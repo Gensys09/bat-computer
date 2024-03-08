@@ -13,7 +13,7 @@ public class BatMember {
     private String role;
 
     //BatMember only known to the BatComputer package
-    BatMember() {}
+    public BatMember() {}
 
     BatMember(String name, String role){
         this.name = name;
@@ -51,10 +51,11 @@ public class BatMember {
         if(this == o){
             return true;
         }
-        if (!(o instanceof BatMember)){
+
+        //pattern variable (Java 14 feature)
+        if (!(o instanceof BatMember batMember)){
             return false;
         }
-        BatMember batMember = (BatMember) o;
         return id.equals(batMember.id);
     }
 

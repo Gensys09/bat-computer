@@ -32,7 +32,7 @@ class BatMemberController {
                 .orElseThrow(() -> new BatMemberNotFoundException(id));
     }
 
-    @PutMapping("/bat-members/{}")
+    @PutMapping("/bat-members/{id}")
     BatMember replaceBatMember(@RequestBody BatMember newBatMember, @PathVariable Long id) {
         return  repository.findById(id)
                 //if the BatMember is found, update the name and role
