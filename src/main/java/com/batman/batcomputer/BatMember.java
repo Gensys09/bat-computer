@@ -6,13 +6,13 @@ import jakarta.persistence.Id;
 
 import java.util.Objects;
 
+//entity class to represent a BatMember
 @Entity
 public class BatMember {
     private @Id @GeneratedValue Long id;
     private String name;
     private String role;
 
-    //BatMember only known to the BatComputer package
     public BatMember() {}
 
     BatMember(String name, String role){

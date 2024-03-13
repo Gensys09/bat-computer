@@ -49,7 +49,7 @@ class BatMemberController {
     }
 
     @DeleteMapping("/bat-members/{id}")
-    void deleteEmployee(@PathVariable Long id) {
+    void deleteBatMember(@PathVariable Long id) {
         repository.deleteById(id);
     }
 
