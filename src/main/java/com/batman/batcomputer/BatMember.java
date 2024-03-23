@@ -10,17 +10,25 @@ import java.util.Objects;
 @Entity
 public class BatMember {
     private @Id @GeneratedValue Long id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String role;
 
     public BatMember() {}
 
-    BatMember(String name, String role){
-        this.name = name;
+    BatMember(String firstName, String lastName, String role){
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.role = role;
     }
 
     //getters and setters
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
     public Long getId() {
         return id;
@@ -31,11 +39,13 @@ public class BatMember {
     }
 
     public String getName() {
-        return name;
+        return this.firstName + " " + this.lastName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        String[] names = name.split(" ");
+        this.firstName = names[0];
+        this.lastName = names[1];
     }
 
     public String getRole() {
@@ -51,24 +61,23 @@ public class BatMember {
         if(this == o){
             return true;
         }
-
         //pattern variable (Java 14 feature)
         if (!(o instanceof BatMember batMember)){
             return false;
         }
-        return id.equals(batMember.id);
+        return Objects.equals(this.id, batMember.id) && Objects.equals(this.firstName, batMember.firstName)
+                && Objects.equals(this.lastName, batMember.lastName) && Objects.equals(this.role, batMember.role);
     }
 
     //when you override equals, you should also override hashCode
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.role);
+        return Objects.hash(this.id, this.firstName, this.lastName, this.role);
     }
 
     public String toString() {
-        return "BatMember{" + "id=" + this.id + ", name='" + this.name + '\'' + ", role='" + this.role + '\'' + '}';
+        return "BatMember{" + "id=" + this.id + ", firstName='" + this.firstName + '\'' + ", lastName='" + this.lastName + '\'' + "role='" + this.role + '\'' + '}';
     }
-    //BatMember{id=1, name='Bruce Wayne', role='Batman'}
-
+    //BatMember{id=1, firstName='Bruce', lastName='Wayne', role='Detective'}
 
 }

@@ -16,11 +16,21 @@ class LoadDatabase {
 
     //command line runner to save the BatMembers to the database
     @Bean
-    CommandLineRunner initDatabase(BatMemberRepository repository) {
+    CommandLineRunner initDatabase(BatMemberRepository batRepository, ObjectiveRepository objectiveRepository) {
         //lambda expression to save the BatMembers to the database
         return args -> {
-            log.info("Preloading " + repository.save(new BatMember("Bruce Wayne", "Batman")));
-            log.info("Preloading " + repository.save(new BatMember("Alfred Pennyworth", "Butler")));
+            batRepository.save(new BatMember("Bruce", "Wayne", "Batman"));
+            batRepository.save(new BatMember("Alfred", "Pennyworth", "Butler"));
+
+
+            batRepository.findAll().forEach(batMember ->
+                    log.info("Preloaded member: " + batMember));
+
+            objectiveRepository.save(new Objective("Survey the city", Status.COMPLETED.name()));
+            objectiveRepository.save(new Objective("Investigate recent reports", Status.IN_PROGRESS.name()));
+            objectiveRepository.findAll().forEach(objective -> {
+                log.info("Preloaded objective: " + objective);
+            });
         };
     }
 }

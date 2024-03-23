@@ -2,7 +2,10 @@ package com.batman.batcomputer;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +31,7 @@ class BatMemberController {
         List<EntityModel<BatMember>> batMembers = repository.findAll().stream()
                 .map(assembler::toModel)
                         .collect(Collectors.toList());
+        //collect all BatMembers and add a link to the method all() for bat-members endpoint
 
         //methodOn is used to create a link to the method all() for bat-members endpoint
         return CollectionModel.of(batMembers, linkTo(methodOn(BatMemberController.class).all()).withSelfRel());
@@ -35,8 +39,16 @@ class BatMemberController {
     // end::get-aggregate-root[]
 
     @PostMapping("/bat-members")
-    BatMember newBatMember(@RequestBody BatMember newBatMember) {
-        return repository.save(newBatMember);
+    //ResponseEntity is a generic container part of Spring HATEOAS
+    ResponseEntity<?> newBatMember(@RequestBody BatMember newBatMember) {
+        EntityModel<BatMember> entityModel = assembler.toModel(repository.save(newBatMember));
+
+        return ResponseEntity
+                //necessary to provide a URI representing the location of the resource
+                //when returning a 201 Created status
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()
+                ).body(entityModel);
+
     }
 
     // Single item
@@ -51,24 +63,43 @@ class BatMemberController {
     }
 
     @PutMapping("/bat-members/{id}")
-    BatMember replaceBatMember(@RequestBody BatMember newBatMember, @PathVariable Long id) {
-        return  repository.findById(id)
-                //if the BatMember is found, update the name and role
-                .map(batMember -> {
+    ResponseEntity<?> replaceBatMember(@RequestBody BatMember newBatMember, @PathVariable Long id) {
+                BatMember updatedBatMember = repository.findById(id)
+                        .map(batMember -> {
                     batMember.setName(newBatMember.getName());
                     batMember.setRole(newBatMember.getRole());
                     return repository.save(batMember);
-                })
-                //if the BatMember is not found, create a new BatMember
-                .orElseGet(() -> {
-                    newBatMember.setId(id);
-                    return repository.save(newBatMember);
-                });
+                        })
+                        .orElseGet(() -> {
+                            newBatMember.setId(id);
+                            return repository.save(newBatMember);
+                        });
+
+        EntityModel <BatMember> entityModel = assembler.toModel(updatedBatMember);
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
+
+
+//        return  repository.findById(id)
+//                //if the BatMember is found, update the name and role
+//                .map(batMember -> {
+//                    batMember.setName(newBatMember.getName());
+//                    batMember.setRole(newBatMember.getRole());
+//                    return repository.save(batMember);
+//                })
+//                //if the BatMember is not found, create a new BatMember
+//                .orElseGet(() -> {
+//                    newBatMember.setId(id);
+//                    return repository.save(newBatMember);
+//                });
     }
 
     @DeleteMapping("/bat-members/{id}")
-    void deleteBatMember(@PathVariable Long id) {
+    ResponseEntity<?> deleteBatMember(@PathVariable Long id) {
         repository.deleteById(id);
-    }
 
+        //return a 204 No Content response
+        return ResponseEntity.noContent().build();
+    }
 }
