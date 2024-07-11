@@ -1,4 +1,4 @@
-package com.batman.batcomputer;
+package com.project.tasktracker;
 
 public class ObjectiveNotFoundException extends RuntimeException {
     ObjectiveNotFoundException(Long id) {

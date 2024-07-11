@@ -1,4 +1,4 @@
-package com.batman.batcomputer;
+package com.project.tasktracker;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -10,59 +10,58 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-public class ObjectiveController {
-    private final ObjectiveRepository repository;
-    private final ObjectiveModelAssembler assembler;
+public class TaskController {
+    private final TaskRepository repository;
+    private final TaskModelAssembler assembler;
 
-    ObjectiveController(ObjectiveRepository repository, ObjectiveModelAssembler assembler) {
+    TaskController(TaskRepository repository, TaskModelAssembler assembler) {
         this.repository = repository;
         this.assembler = assembler;
     }
 
     @GetMapping("/objectives")
-    CollectionModel<EntityModel<Objective>> all() {
-        List<EntityModel<Objective>> objectives = repository.findAll().stream()
+    CollectionModel<EntityModel<Task>> all() {
+        List<EntityModel<Task>> objectives = repository.findAll().stream()
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
         return CollectionModel.of(objectives,
-                linkTo(methodOn(ObjectiveController.class).all()).withSelfRel());
+                linkTo(methodOn(TaskController.class).all()).withSelfRel());
     }
 
     @GetMapping("/objectives/{id}")
-    EntityModel<Objective> one(@PathVariable Long id) {
-        Objective objective = repository.findById(id)
+    EntityModel<Task> one(@PathVariable Long id) {
+        Task task = repository.findById(id)
                 .orElseThrow(() -> new ObjectiveNotFoundException(id));
 
-        return assembler.toModel(objective);
+        return assembler.toModel(task);
     }
 
     @PostMapping("/objectives")
-    ResponseEntity<EntityModel<Objective>> newObjective(@RequestBody Objective objective) {
+    ResponseEntity<EntityModel<Task>> newObjective(@RequestBody Task task) {
         //converting enum to string by valueOf() method
-        objective.setStatus(String.valueOf(Status.IN_PROGRESS));
+        task.setStatus(String.valueOf(Status.IN_PROGRESS));
 
-        Objective newObjective = repository.save(objective);
+        Task newTask = repository.save(task);
         return ResponseEntity
-                .created(linkTo(methodOn(ObjectiveController.class).one(newObjective.getId())).toUri())
-                .body(assembler.toModel(newObjective));
+                .created(linkTo(methodOn(TaskController.class).one(newTask.getId())).toUri())
+                .body(assembler.toModel(newTask));
     }
 
     @DeleteMapping("/objectives/{id}/cancel")
     ResponseEntity<?> cancel(@PathVariable Long id) {
-        Objective objective = repository.findById(id)
+        Task task = repository.findById(id)
                 .orElseThrow(() -> new ObjectiveNotFoundException(id));
 
-        if (objective.getStatus().equals(Status.IN_PROGRESS.name())) {
-            objective.setStatus(Status.CANCELLED.name());
-            return ResponseEntity.ok(assembler.toModel(repository.save(objective)));
+        if (task.getStatus().equals(Status.IN_PROGRESS.name())) {
+            task.setStatus(Status.CANCELLED.name());
+            return ResponseEntity.ok(assembler.toModel(repository.save(task)));
         }
 
         return ResponseEntity
@@ -71,16 +70,16 @@ public class ObjectiveController {
                         MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .body(Problem.create()
                         .withTitle("Method not allowed")
-                        .withDetail("You can't cancel an objective that is in the " + objective.getStatus() + " status"));
+                        .withDetail("You can't cancel a task that is in the " + task.getStatus() + " status"));
     }
 
     @PutMapping("/objectives/{id}/complete")
     ResponseEntity<?> complete(@PathVariable Long id) {
-        Objective objective = repository.findById(id)
+        Task task = repository.findById(id)
                 .orElseThrow( () -> new ObjectiveNotFoundException(id));
-        if (objective.getStatus().equals(Status.IN_PROGRESS.name())) {
-            objective.setStatus(Status.COMPLETED.name());
-            return ResponseEntity.ok(assembler.toModel(repository.save(objective)));
+        if (task.getStatus().equals(Status.IN_PROGRESS.name())) {
+            task.setStatus(Status.COMPLETED.name());
+            return ResponseEntity.ok(assembler.toModel(repository.save(task)));
         }
 
         return ResponseEntity
@@ -89,7 +88,7 @@ public class ObjectiveController {
                         MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .body(Problem.create()
                         .withTitle("Method not allowed")
-                        .withDetail("You can't complete an objective that is in the "
-                                + objective.getStatus() + " status"));
+                        .withDetail("You can't complete a task that is in the "
+                                + task.getStatus() + " status"));
     }
 }

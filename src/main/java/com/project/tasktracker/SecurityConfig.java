@@ -1,4 +1,4 @@
-package com.batman.batcomputer;
+package com.project.tasktracker;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

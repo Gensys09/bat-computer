@@ -1,4 +1,4 @@
-package com.batman.batcomputer;
+package com.project.tasktracker;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,15 +8,15 @@ import jakarta.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "OBJECTIVE")
-public class Objective {
+@Table(name = "TASK")
+public class Task {
     private @Id
     @GeneratedValue Long id;
 
     private String description;
     private String status;
-    public Objective() {}
-    Objective(String description, String status) {
+    public Task() {}
+    Task(String description, String status) {
         this.description = description;
         this.status = status;
     }
@@ -50,13 +50,13 @@ public class Objective {
         if (this == o){
             return true;
         }
-        if (!(o instanceof Objective objective)) {
+        if (!(o instanceof Task task)) {
             return false;
         }
 
-        return Objects.equals(this.id, objective.id) &&
-                Objects.equals(this.description, objective.description) &&
-                Objects.equals(this.status, objective.status);
+        return Objects.equals(this.id, task.id) &&
+                Objects.equals(this.description, task.description) &&
+                Objects.equals(this.status, task.status);
 
     }
 

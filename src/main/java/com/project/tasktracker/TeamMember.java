@@ -1,4 +1,4 @@
-package com.batman.batcomputer;
+package com.project.tasktracker;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,17 +6,17 @@ import jakarta.persistence.Id;
 
 import java.util.Objects;
 
-//entity class to represent a BatMember
+//entity class to represent a TeamMember
 @Entity
-public class BatMember {
+public class TeamMember {
     private @Id @GeneratedValue Long id;
     private String firstName;
     private String lastName;
     private String role;
 
-    public BatMember() {}
+    public TeamMember() {}
 
-    BatMember(String firstName, String lastName, String role){
+    TeamMember(String firstName, String lastName, String role){
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
@@ -62,11 +62,11 @@ public class BatMember {
             return true;
         }
         //pattern variable (Java 14 feature)
-        if (!(o instanceof BatMember batMember)){
+        if (!(o instanceof TeamMember teamMember)){
             return false;
         }
-        return Objects.equals(this.id, batMember.id) && Objects.equals(this.firstName, batMember.firstName)
-                && Objects.equals(this.lastName, batMember.lastName) && Objects.equals(this.role, batMember.role);
+        return Objects.equals(this.id, teamMember.id) && Objects.equals(this.firstName, teamMember.firstName)
+                && Objects.equals(this.lastName, teamMember.lastName) && Objects.equals(this.role, teamMember.role);
     }
 
     //when you override equals, you should also override hashCode
@@ -76,8 +76,8 @@ public class BatMember {
     }
 
     public String toString() {
-        return "BatMember{" + "id=" + this.id + ", firstName='" + this.firstName + '\'' + ", lastName='" + this.lastName + '\'' + "role='" + this.role + '\'' + '}';
+        return "TeamMember{" + "id=" + this.id + ", firstName='" + this.firstName + '\'' + ", lastName='" + this.lastName + '\'' + "role='" + this.role + '\'' + '}';
     }
-    //BatMember{id=1, firstName='Bruce', lastName='Wayne', role='Detective'}
+    //TeamMember{id=1, firstName='Bruce', lastName='Wayne', role='Detective'}
 
 }
